@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="format-detection" content="telephone=no">
+<title>Alto Rendimiento</title>
+<style>
+* { -webkit-box-sizing: border-box; box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+:root {
+  --bg: #0a0a0a;
+  --s1: #161616;
+  --s2: #202020;
+  --b1: rgba(255,255,255,0.08);
+  --b2: rgba(255,255,255,0.15);
+  --t1: #f0f0f0;
+  --t2: #888888;
+  --t3: #444444;
+  --green: #00e676;
+  --gbg: rgba(0,230,118,0.10);
+}
+html, body {
+  background: #0a0a0a;
+  color: #f0f0f0;
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+body { padding-bottom: 50px; }
+.app { max-width: 500px; margin: 0 auto; padding: 20px 16px; }
+
+/* HEADER */
+.hdr { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: center; align-items: center; margin-bottom: 22px; padding-top: 6px; }
+.hdr-title { font-size: 12px; font-weight: 600; color: #888; letter-spacing: 0.12em; text-transform: uppercase; }
+.dnav { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; }
+.nbtn { width: 38px; height: 38px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.15); background: #161616; color: #f0f0f0; font-size: 17px; cursor: pointer; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; -webkit-appearance: none; appearance: none; }
+.nbtn:active { background: #202020; }
+.dchip { font-size: 13px; font-weight: 500; color: #888; min-width: 55px; text-align: center; font-variant-numeric: tabular-nums; }
+
+/* BIG DATE */
+.bigdate { margin-bottom: 18px; }
+.bd-d { font-size: 36px; font-weight: 300; line-height: 1.05; color: #f0f0f0; }
+.bd-d strong { color: #00e676; font-weight: 300; }
+.bd-s { font-size: 13px; color: #888; margin-top: 5px; }
+
+/* PROGRESS */
+.prog { background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 14px 16px; margin-bottom: 12px; }
+.prog-top { display: -webkit-flex; display: flex; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: baseline; align-items: baseline; margin-bottom: 10px; }
+.prog-lbl { font-size: 12px; color: #888; }
+.prog-pct { font-size: 26px; font-weight: 500; color: #00e676; font-variant-numeric: tabular-nums; }
+.prog-track { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.prog-bar { height: 3px; background: #00e676; border-radius: 2px; width: 0%; -webkit-transition: width 0.4s ease; transition: width 0.4s ease; }
+
+/* STATS */
+.stats { display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 14px; }
+.stat { -webkit-flex: 1; flex: 1; background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 12px 14px; }
+.sv { font-size: 22px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.sl { font-size: 11px; color: #888; margin-top: 3px; }
+
+/* TABS */
+.tabs { display: -webkit-flex; display: flex; background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 3px; margin-bottom: 16px; }
+.tab { -webkit-flex: 1; flex: 1; padding: 9px 4px; font-size: 13px; cursor: pointer; border: none; background: transparent; color: #888; border-radius: 11px; font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif; -webkit-transition: all 0.15s; transition: all 0.15s; -webkit-appearance: none; appearance: none; }
+.tab.on { background: #202020; color: #f0f0f0; font-weight: 500; }
+
+/* SECTION LABEL */
+.slbl { font-size: 11px; color: #444; text-transform: uppercase; letter-spacing: 0.09em; margin: 14px 0 8px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 8px; }
+.slbl:after { content: ''; -webkit-flex: 1; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+
+/* BLOCKS */
+.blist { display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; gap: 6px; }
+.blk { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 10px; background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 13px; padding: 13px 12px; cursor: pointer; position: relative; overflow: hidden; -webkit-transition: opacity 0.15s; transition: opacity 0.15s; min-height: 54px; }
+.blk:active { opacity: 0.6; }
+.blk.done { opacity: 0.38; }
+.blk.done .bn { text-decoration: line-through; }
+.bstripe { position: absolute; left: 0; top: 0; bottom: 0; width: 3px; border-radius: 3px 0 0 3px; }
+
+.chk { width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid rgba(255,255,255,0.2); -webkit-flex-shrink: 0; flex-shrink: 0; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; -webkit-transition: all 0.2s; transition: all 0.2s; background: transparent; }
+.blk.done .chk { background: #00e676; border-color: #00e676; }
+.chkmark { display: none; color: #000; font-size: 13px; font-weight: 700; line-height: 1; }
+.blk.done .chkmark { display: block; }
+
+.bi { -webkit-flex: 1; flex: 1; min-width: 0; }
+.bn { font-size: 13px; font-weight: 500; color: #f0f0f0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bt { font-size: 11px; color: #888; margin-top: 3px; font-variant-numeric: tabular-nums; }
+
+.pill { font-size: 10px; padding: 3px 8px; border-radius: 20px; white-space: nowrap; -webkit-flex-shrink: 0; flex-shrink: 0; font-weight: 600; }
+.delbtn { background: transparent; border: none; color: #444; font-size: 22px; cursor: pointer; padding: 2px 4px; -webkit-flex-shrink: 0; flex-shrink: 0; line-height: 1; -webkit-appearance: none; appearance: none; min-width: 28px; min-height: 28px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; }
+.delbtn:active { color: #f44336; }
+
+.empty { text-align: center; padding: 50px 0; font-size: 13px; color: #444; line-height: 1.8; }
+
+/* WEEK */
+.wgrid { display: -webkit-flex; display: flex; gap: 4px; }
+.wcol { -webkit-flex: 1; flex: 1; display: -webkit-flex; display: flex; -webkit-flex-direction: column; flex-direction: column; gap: 3px; min-width: 0; }
+.whdr { font-size: 10px; font-weight: 500; text-align: center; padding: 5px 1px; background: #161616; border-radius: 7px; color: #888; line-height: 1.4; border: 1px solid transparent; }
+.whdr.tod { background: rgba(0,230,118,0.10); color: #00e676; border-color: #00e676; }
+.mini { height: 20px; border-radius: 3px; font-size: 7px; display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; -webkit-justify-content: center; justify-content: center; padding: 1px 2px; text-align: center; overflow: hidden; line-height: 1.1; }
+.mini.dm { opacity: 0.22; }
+
+/* LEGEND */
+.legend { display: -webkit-flex; display: flex; -webkit-flex-wrap: wrap; flex-wrap: wrap; gap: 8px; margin-bottom: 14px; }
+.leg { display: -webkit-flex; display: flex; -webkit-align-items: center; align-items: center; gap: 5px; font-size: 11px; color: #888; }
+.ldot { width: 7px; height: 7px; border-radius: 50%; -webkit-flex-shrink: 0; flex-shrink: 0; }
+
+/* FORM */
+.form { background: #161616; border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; padding: 18px; }
+.flbl { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.08em; display: block; margin-bottom: 8px; }
+.finp {
+  width: 100%; background: #202020; border: 1px solid rgba(255,255,255,0.13);
+  border-radius: 10px; padding: 13px 12px; font-size: 16px; color: #f0f0f0;
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  outline: none; margin-bottom: 14px;
+  -webkit-appearance: none; appearance: none;
+  display: block;
+}
+.finp:focus { border-color: #00e676; }
+select.finp { padding-right: 12px; }
+.trow { display: -webkit-flex; display: flex; gap: 8px; margin-bottom: 14px; }
+.trow .finp { -webkit-flex: 1; flex: 1; margin-bottom: 0; }
+.fabtn {
+  width: 100%; padding: 15px; background: rgba(0,230,118,0.10);
+  border: 1px solid #00e676; border-radius: 10px; font-size: 15px;
+  cursor: pointer; color: #00e676;
+  font-family: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  font-weight: 600; letter-spacing: 0.02em;
+  -webkit-appearance: none; appearance: none;
+}
+.fabtn:active { background: rgba(0,230,118,0.22); }
+
+/* BANNER */
+.banner { background: rgba(0,230,118,0.08); border: 1px solid #00e676; border-radius: 14px; padding: 13px 14px; margin-bottom: 16px; font-size: 12px; color: #00e676; line-height: 1.6; display: -webkit-flex; display: flex; gap: 10px; -webkit-justify-content: space-between; justify-content: space-between; -webkit-align-items: flex-start; align-items: flex-start; }
+.bcls { background: transparent; border: none; color: #00e676; font-size: 20px; cursor: pointer; line-height: 1; padding: 0; -webkit-appearance: none; appearance: none; min-width: 24px; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div id="banner" class="banner" style="display:none">
+    <div>
+      <strong>Instalar como app:</strong><br>
+      iPhone: Compartir (cuadro con flecha) → "En la pantalla de inicio"<br>
+      Android: Menu ··· → "Instalar aplicacion"
+    </div>
+    <button class="bcls" onclick="closeBanner()">&#215;</button>
+  </div>
+
+  <div class="hdr">
+    <span class="hdr-title">Alto Rendimiento</span>
+    <div class="dnav">
+      <button class="nbtn" onclick="chDay(-1)">&#8592;</button>
+      <span class="dchip" id="chip">Hoy</span>
+      <button class="nbtn" onclick="chDay(1)">&#8594;</button>
+    </div>
+  </div>
+
+  <div class="bigdate">
+    <div class="bd-d" id="bdD"></div>
+    <div class="bd-s" id="bdS"></div>
+  </div>
+
+  <div class="prog">
+    <div class="prog-top">
+      <span class="prog-lbl" id="pLbl">Progreso del dia</span>
+      <span class="prog-pct" id="pPct">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-bar" id="pBar"></div></div>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs">
+    <button class="tab on" id="tab-day"  onclick="sw('day')">Hoy</button>
+    <button class="tab"    id="tab-week" onclick="sw('week')">Semana</button>
+    <button class="tab"    id="tab-add"  onclick="sw('add')">+ Agregar</button>
+  </div>
+
+  <div id="vDay">
+    <div class="legend" id="legEl"></div>
+    <div id="dayEl"></div>
+  </div>
+
+  <div id="vWeek" style="display:none">
+    <div class="wgrid" id="wgEl"></div>
+  </div>
+
+  <div id="vAdd" style="display:none">
+    <div class="form">
+      <label class="flbl">Nombre</label>
+      <input class="finp" id="fN" type="text" placeholder="Ej: Llamada con cliente..." autocomplete="off" autocorrect="off" autocapitalize="sentences">
+      <label class="flbl">Categoria</label>
+      <select class="finp" id="fC">
+        <option value="trabajo">Trabajo</option>
+        <option value="ingles">Ingles / Aprendizaje</option>
+        <option value="ejercicio">Ejercicio</option>
+        <option value="descanso">Descanso</option>
+        <option value="deudas">Finanzas / Deudas</option>
+        <option value="personal">Personal</option>
+      </select>
+      <label class="flbl">Hora inicio / fin</label>
+      <div class="trow">
+        <input class="finp" id="fS" type="time" value="08:00">
+        <input class="finp" id="fE" type="time" value="09:00">
+      </div>
+      <button class="fabtn" onclick="addBlk()">Agregar actividad</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+var CATS = {
+  trabajo:   { c: '#4fc3f7', bg: 'rgba(79,195,247,0.13)',  l: 'Trabajo' },
+  ingles:    { c: '#aed581', bg: 'rgba(174,213,129,0.13)', l: 'Ingles' },
+  ejercicio: { c: '#ff8a65', bg: 'rgba(255,138,101,0.13)', l: 'Ejercicio' },
+  descanso:  { c: '#90a4ae', bg: 'rgba(144,164,174,0.13)', l: 'Descanso' },
+  deudas:    { c: '#ffca28', bg: 'rgba(255,202,40,0.13)',  l: 'Finanzas' },
+  personal:  { c: '#ce93d8', bg: 'rgba(206,147,216,0.13)', l: 'Personal' }
+};
+
+var DEF = [
+  {id:'d1',  name:'Rutina matutina',                cat:'personal',  start:'04:00', end:'04:30'},
+  {id:'d2',  name:'Deep work 1 - prioridad maxima', cat:'trabajo',   start:'04:30', end:'07:00'},
+  {id:'d3',  name:'Ejercicio en gimnasio',           cat:'ejercicio', start:'07:00', end:'08:00'},
+  {id:'d4',  name:'Ducha + desayuno',                cat:'personal',  start:'08:00', end:'08:30'},
+  {id:'d5',  name:'Deep work 2 - reuniones',         cat:'trabajo',   start:'08:30', end:'12:00'},
+  {id:'d6',  name:'Almuerzo + pausa activa',          cat:'descanso',  start:'12:00', end:'13:00'},
+  {id:'d7',  name:'Deep work 3 - entregables',       cat:'trabajo',   start:'13:00', end:'16:00'},
+  {id:'d8',  name:'Revision deudas y presupuesto',   cat:'deudas',    start:'16:00', end:'16:30'},
+  {id:'d9',  name:'Cierre laboral + daily log',      cat:'trabajo',   start:'16:30', end:'17:00'},
+  {id:'d10', name:'Clase ingles 1',                  cat:'ingles',    start:'18:00', end:'19:30'},
+  {id:'d11', name:'Clase ingles 2 + practica DET',   cat:'ingles',    start:'19:30', end:'21:00'},
+  {id:'d12', name:'Prep dia siguiente',              cat:'personal',  start:'21:00', end:'21:30'},
+  {id:'d13', name:'Lectura + relajacion',             cat:'descanso',  start:'21:30', end:'22:00'}
+];
+
+var DAYS   = ['Domingo','Lunes','Martes','Miercoles','Jueves','Viernes','Sabado'];
+var MONTHS = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+var DLBL   = ['L','M','X','J','V','S','D'];
+
+var cur = new Date();
+var activeTab = 'day';
+var DB = {};
+
+// --- STORAGE (con fallback por si Safari bloquea localStorage) ---
+var useStorage = false;
+try {
+  localStorage.setItem('_t', '1');
+  localStorage.removeItem('_t');
+  useStorage = true;
+} catch(e) { useStorage = false; }
+
+function loadDB() {
+  if (!useStorage) return;
+  try {
+    var raw = localStorage.getItem('ar5');
+    if (raw) DB = JSON.parse(raw);
+  } catch(e) { DB = {}; }
+}
+
+function saveDB() {
+  if (!useStorage) return;
+  try { localStorage.setItem('ar5', JSON.stringify(DB)); } catch(e) {}
+}
+
+function dk(d) {
+  var y = d.getFullYear();
+  var m = ('0' + (d.getMonth()+1)).slice(-2);
+  var day = ('0' + d.getDate()).slice(-2);
+  return y + '-' + m + '-' + day;
+}
+
+function getDayBlocks(k) {
+  if (!DB[k]) {
+    DB[k] = DEF.map(function(b) {
+      return { id: b.id, name: b.name, cat: b.cat, start: b.start, end: b.end, done: false };
+    });
+    saveDB();
+  }
+  return DB[k];
+}
+
+function weekOf(d) {
+  var day = d.getDay();
+  var diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  var mon = new Date(d.getFullYear(), d.getMonth(), diff);
+  var result = [];
+  for (var i = 0; i < 7; i++) {
+    result.push(new Date(mon.getFullYear(), mon.getMonth(), mon.getDate() + i));
+  }
+  return result;
+}
+
+// --- RENDER ---
+function render() {
+  renderHeader();
+  renderProgress();
+  renderStats();
+  if (activeTab === 'day')  renderDay();
+  if (activeTab === 'week') renderWeek();
+}
+
+function renderHeader() {
+  var k = dk(cur), t = dk(new Date());
+  var isToday = k === t;
+  var n = cur.getDate();
+  var dayName = DAYS[cur.getDay()];
+  var month = MONTHS[cur.getMonth()];
+  document.getElementById('bdD').innerHTML = dayName.slice(0,3) + ' <strong>' + n + '</strong>';
+  document.getElementById('bdS').textContent = month + ' ' + cur.getFullYear() + (isToday ? ' \u00b7 Hoy' : '');
+  document.getElementById('chip').textContent = isToday ? 'Hoy' : (n + '/' + (cur.getMonth()+1));
+}
+
+function renderProgress() {
+  var bl = getDayBlocks(dk(cur));
+  var done = 0;
+  for (var i = 0; i < bl.length; i++) { if (bl[i].done) done++; }
+  var pct = bl.length ? Math.round(done / bl.length * 100) : 0;
+  document.getElementById('pBar').style.width = pct + '%';
+  document.getElementById('pPct').textContent = pct + '%';
+  document.getElementById('pLbl').textContent = done + ' de ' + bl.length + ' completados';
+}
+
+function renderStats() {
+  var t = dk(new Date());
+  var tb = DB[t] || [];
+  var td = 0;
+  for (var i = 0; i < tb.length; i++) { if (tb[i].done) td++; }
+  var wds = weekOf(new Date());
+  var wd = 0, wt = 0;
+  for (var j = 0; j < wds.length; j++) {
+    var bl = DB[dk(wds[j])] || [];
+    for (var k = 0; k < bl.length; k++) { if (bl[k].done) wd++; }
+    wt += bl.length;
+  }
+  var pct = wt > 0 ? Math.round(wd / wt * 100) : 0;
+  document.getElementById('stats').innerHTML =
+    '<div class="stat"><div class="sv" style="color:#00e676">' + td + '/' + tb.length + '</div><div class="sl">Completados hoy</div></div>' +
+    '<div class="stat"><div class="sv">' + pct + '%</div><div class="sl">Cumplimiento semanal</div></div>';
+}
+
+function renderLegend() {
+  var html = '';
+  for (var key in CATS) {
+    html += '<div class="leg"><div class="ldot" style="background:' + CATS[key].c + '"></div>' + CATS[key].l + '</div>';
+  }
+  document.getElementById('legEl').innerHTML = html;
+}
+
+function renderDay() {
+  renderLegend();
+  var k = dk(cur);
+  var bl = getDayBlocks(k);
+
+  if (!bl.length) {
+    document.getElementById('dayEl').innerHTML = '<div class="empty">Sin actividades.<br>Ve a "+ Agregar" para crear una.</div>';
+    return;
+  }
+
+  var mana = [], tarde = [], noche = [];
+  for (var i = 0; i < bl.length; i++) {
+    var h = parseInt(bl[i].start.split(':')[0], 10);
+    if (h < 12) mana.push(i);
+    else if (h < 18) tarde.push(i);
+    else noche.push(i);
+  }
+
+  var html = '';
+  var groups = [{label:'Manana', idxs: mana}, {label:'Tarde', idxs: tarde}, {label:'Noche', idxs: noche}];
+  for (var g = 0; g < groups.length; g++) {
+    if (!groups[g].idxs.length) continue;
+    html += '<div class="slbl">' + groups[g].label + '</div><div class="blist">';
+    for (var x = 0; x < groups[g].idxs.length; x++) {
+      var idx = groups[g].idxs[x];
+      var b = bl[idx];
+      var cat = CATS[b.cat] || CATS.personal;
+      html += '<div class="blk' + (b.done ? ' done' : '') + '" onclick="tog(\'' + k + '\',' + idx + ')">' +
+        '<div class="bstripe" style="background:' + cat.c + '"></div>' +
+        '<div class="chk"><span class="chkmark">&#10003;</span></div>' +
+        '<div class="bi">' +
+          '<div class="bn">' + esc(b.name) + '</div>' +
+          '<div class="bt">' + b.start + ' \u2013 ' + b.end + '</div>' +
+        '</div>' +
+        '<span class="pill" style="background:' + cat.bg + ';color:' + cat.c + '">' + cat.l + '</span>' +
+        '<button class="delbtn" onclick="stopEv(event);del(\'' + k + '\',' + idx + ')">&#215;</button>' +
+      '</div>';
+    }
+    html += '</div>';
+  }
+
+  document.getElementById('dayEl').innerHTML = html;
+}
+
+function renderWeek() {
+  var wds = weekOf(cur);
+  var tk = dk(new Date());
+  var html = '';
+  for (var i = 0; i < wds.length; i++) {
+    var k = dk(wds[i]);
+    var bl = DB[k] || [];
+    var isT = k === tk;
+    var minis = '';
+    for (var j = 0; j < bl.length; j++) {
+      var c = CATS[bl[j].cat] || CATS.personal;
+      var nm = bl[j].name.length > 8 ? bl[j].name.slice(0,8) : bl[j].name;
+      minis += '<div class="mini' + (bl[j].done ? ' dm' : '') + '" style="background:' + c.bg + ';color:' + c.c + '">' + esc(nm) + '</div>';
+    }
+    if (!minis) minis = '<div style="height:6px"></div>';
+    html += '<div class="wcol"><div class="whdr' + (isT ? ' tod' : '') + '">' + DLBL[i] + '<br>' + wds[i].getDate() + '</div>' + minis + '</div>';
+  }
+  document.getElementById('wgEl').innerHTML = html;
+}
+
+// --- ACTIONS ---
+function tog(k, i) {
+  var bl = getDayBlocks(k);
+  bl[i].done = !bl[i].done;
+  saveDB();
+  render();
+}
+
+function del(k, i) {
+  if (DB[k]) {
+    DB[k].splice(i, 1);
+    saveDB();
+    render();
+  }
+}
+
+function stopEv(e) {
+  e.stopPropagation();
+}
+
+function addBlk() {
+  var name = document.getElementById('fN').value;
+  if (name) { name = name.trim(); }
+  if (!name) {
+    document.getElementById('fN').focus();
+    return;
+  }
+  var cat   = document.getElementById('fC').value;
+  var start = document.getElementById('fS').value;
+  var end   = document.getElementById('fE').value;
+  var k = dk(cur);
+  getDayBlocks(k);
+  DB[k].push({ id: 'u' + Date.now(), name: name, cat: cat, start: start, end: end, done: false });
+  DB[k].sort(function(a, b) { return a.start > b.start ? 1 : -1; });
+  saveDB();
+  document.getElementById('fN').value = '';
+  sw('day');
+}
+
+function chDay(n) {
+  cur = new Date(cur.getFullYear(), cur.getMonth(), cur.getDate() + n);
+  render();
+}
+
+function sw(t) {
+  activeTab = t;
+  var tabs = ['day','week','add'];
+  for (var i = 0; i < tabs.length; i++) {
+    var id = tabs[i];
+    var tabEl = document.getElementById('tab-' + id);
+    var viewEl = document.getElementById('v' + id.charAt(0).toUpperCase() + id.slice(1));
+    if (id === t) {
+      tabEl.className = 'tab on';
+      viewEl.style.display = '';
+    } else {
+      tabEl.className = 'tab';
+      viewEl.style.display = 'none';
+    }
+  }
+  render();
+}
+
+function closeBanner() {
+  document.getElementById('banner').style.display = 'none';
+  if (useStorage) {
+    try { localStorage.setItem('bannerOff', '1'); } catch(e) {}
+  }
+}
+
+function esc(str) {
+  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// --- INIT ---
+loadDB();
+
+var showBanner = true;
+if (useStorage) {
+  try { if (localStorage.getItem('bannerOff')) showBanner = false; } catch(e) {}
+}
+if (showBanner) document.getElementById('banner').style.display = 'flex';
+
+render();
+</script>
+</body>
+</html>
